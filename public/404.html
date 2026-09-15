@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <script>
+    const path = window.location.pathname;
+
+    const base = "/portfolio";
+
+    if (path.startsWith(base)) {
+      const route = path.slice(base.length);
+
+      window.location.replace(
+        base + "/?redirect=" +
+        encodeURIComponent(route) +
+        window.location.search +
+        window.location.hash
+      );
+    }
+  </script>
+</head>
+<body>
+</body>
+</html>

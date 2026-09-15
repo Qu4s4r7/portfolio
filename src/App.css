@@ -1,0 +1,9 @@
+.app {
+  min-height: 100vh;
+}
+
+.page-container {
+  min-height: 100vh;
+  padding-top: 58px;
+  padding-bottom: 100px;
+}
