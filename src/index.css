@@ -864,158 +864,48 @@ img {
    RESPONSIVE
    ========================================================= */
 
-@media (max-width: 800px) {
-  .topbar {
-    padding: 0 18px;
-  }
-
-  .topbar-nav {
-    gap: 16px;
-    margin-left: 20px;
-  }
-
-  .topbar-nav a {
-    font-size: 11px;
-  }
-
-  .topbar-status {
-    display: none;
-  }
-
-  .content-page {
-    width: min(100% - 32px, 700px);
-
-    padding-top: 60px;
-  }
-
-  .page-header {
-    gap: 18px;
-  }
-
-  .items-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .home-page {
-    padding: 60px 20px;
-  }
-
-  .home-content h1 {
-    font-size: clamp(55px, 15vw, 95px);
-  }
-
-  .markdown-page {
-    width: min(100% - 32px, 700px);
-  }
-}
-
-@media (max-width: 600px) {
-  .topbar {
-    height: 54px;
-  }
-
-  .topbar-nav {
-    display: none;
-  }
-
-  .page-container {
-    padding-top: 54px;
-  }
-
-  .home-page {
-    min-height: calc(100vh - 54px);
-
-    padding: 40px 18px 120px;
-  }
-
-  .home-content h1 {
-    font-size: clamp(52px, 18vw, 85px);
-  }
-
-  .home-description {
-    font-size: 14px;
-  }
-
-  .page-header h1 {
-    font-size: 44px;
-  }
-
-  .page-number {
-    padding-top: 6px;
-  }
-
-  .item-card {
-    min-height: 210px;
-
-    padding: 22px;
-  }
-
-  .markdown-content {
-    font-size: 14px;
-  }
-
-  .markdown-content pre {
-    padding: 15px;
-
-    font-size: 12px;
-  }
-}
-
-@media (max-width: 400px) {
-
-  .home-meta {
-    gap: 10px;
-  }
-}
-
-/* =========================================
-   RESPONSIVE
-   ========================================= */
-
 @media (max-width: 900px) {
   :root {
     --topbar-height: 54px;
   }
 
   .topbar {
-    padding: 0 24px;
+    padding: 0 20px;
   }
 
   .topbar-nav {
     gap: 18px;
+    margin-left: 24px;
   }
 
   .topbar-nav a {
-    font-size: 12px;
+    font-size: 11px;
+    white-space: nowrap;
   }
 
   .topbar-status {
     display: none;
   }
 
-  .page-container {
-    padding-top: var(--topbar-height);
-  }
-
   .content-page {
-    width: min(100% - 48px, 1100px);
-    padding: 70px 0;
+    width: min(100% - 40px, 900px);
+    padding-top: 65px;
   }
 
-  .home-content {
-    width: min(100% - 48px, 1100px);
-  }
-
-  .home-content h1 {
-    font-size: clamp(4rem, 10vw, 7rem);
+  .markdown-page {
+    width: min(100% - 40px, 800px);
   }
 
   .items-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .markdown-page {
-    width: min(100% - 48px, 850px);
+  .home-content {
+    width: min(100% - 40px, 900px);
+  }
+
+  .home-content h1 {
+    font-size: clamp(4rem, 11vw, 7rem);
   }
 }
 
@@ -1026,17 +916,53 @@ img {
   }
 
   .topbar {
-    padding: 0 18px;
+    height: var(--topbar-height);
+
+    padding: 0 14px;
+
+    gap: 16px;
   }
 
   .topbar-logo {
-    font-size: 15px;
+    flex-shrink: 0;
+
+    width: 30px;
+    height: 30px;
+
+    font-size: 10px;
   }
 
   .topbar-nav {
-    gap: 12px;
+    min-width: 0;
+
+    display: flex;
+
+    margin-left: 0;
+
+    gap: 18px;
+
     overflow-x: auto;
+    overflow-y: hidden;
+
     scrollbar-width: none;
+
+    -webkit-overflow-scrolling: touch;
+
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      black 10px,
+      black calc(100% - 10px),
+      transparent 100%
+    );
+
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      black 10px,
+      black calc(100% - 10px),
+      transparent 100%
+    );
   }
 
   .topbar-nav::-webkit-scrollbar {
@@ -1044,8 +970,20 @@ img {
   }
 
   .topbar-nav a {
+    flex-shrink: 0;
+
+    padding: 8px 0;
+
     font-size: 11px;
     white-space: nowrap;
+  }
+
+  .topbar-nav a::after {
+    bottom: 2px;
+  }
+
+  .topbar-status {
+    display: none;
   }
 
   .page-container {
@@ -1056,174 +994,260 @@ img {
 
   .home-page {
     min-height: calc(100vh - var(--topbar-height));
+
+    padding: 50px 18px 80px;
   }
 
   .home-content {
-    width: calc(100% - 36px);
-    padding: 70px 0 50px;
+    width: 100%;
   }
 
   .home-number {
-    font-size: 11px;
+    margin-bottom: 18px;
+
+    font-size: 9px;
   }
 
   .home-label {
-    font-size: 10px;
-    letter-spacing: 0.16em;
+    margin-bottom: 15px;
+
+    font-size: 9px;
+    letter-spacing: 0.17em;
   }
 
   .home-content h1 {
-    font-size: clamp(3.5rem, 17vw, 6rem);
+    font-size: clamp(3.4rem, 18vw, 6rem);
+
     line-height: 0.9;
     letter-spacing: -0.07em;
   }
 
   .home-description {
-    max-width: 320px;
-    font-size: 14px;
+    width: min(320px, 100%);
+
+    margin-top: 28px;
+
+    font-size: 13px;
     line-height: 1.7;
   }
 
   .home-meta {
-    margin-top: 36px;
-    font-size: 9px;
+    margin-top: 32px;
+
+    gap: 10px;
+
+    font-size: 8px;
+  }
+
+  .home-meta-line {
+    width: 32px;
   }
 
   /* GENERAL PAGES */
 
   .content-page {
     width: calc(100% - 36px);
-    padding: 52px 0;
+
+    padding-top: 50px;
+    padding-bottom: 60px;
   }
 
   .page-header {
     display: block;
-    margin-bottom: 42px;
+
+    padding-bottom: 30px;
   }
 
   .page-number {
     display: block;
-    margin-bottom: 18px;
-  }
 
-  .page-header h1 {
-    font-size: clamp(2.8rem, 12vw, 4.5rem);
+    margin-bottom: 16px;
+
+    padding-top: 0;
   }
 
   .page-kicker {
-    font-size: 10px;
+    margin-bottom: 8px;
+
+    font-size: 8px;
+  }
+
+  .page-header h1 {
+    font-size: clamp(2.8rem, 13vw, 4.5rem);
+
+    line-height: 0.95;
   }
 
   /* CARDS */
 
   .items-grid {
     grid-template-columns: 1fr;
-    gap: 12px;
+
+    gap: 10px;
+
+    padding-top: 26px;
   }
 
   .item-card {
-    padding: 22px;
+    min-height: 200px;
+
+    padding: 20px;
+
+    border-radius: 8px;
   }
 
   .item-card h2 {
-    font-size: 24px;
+    font-size: 23px;
   }
 
   .item-card p {
-    font-size: 13px;
+    font-size: 12px;
   }
 
   .item-tags {
-    flex-wrap: wrap;
+    gap: 5px;
+
+    margin-top: 16px;
+  }
+
+  .item-tags span {
+    padding: 4px 7px;
+
+    font-size: 8px;
   }
 
   /* NOTES */
 
+  .notes-list {
+    padding-top: 20px;
+  }
+
   .note-item {
+    gap: 15px;
+
     padding: 20px 0;
-    gap: 20px;
   }
 
   .note-item h2 {
-    font-size: 21px;
+    font-size: 20px;
   }
 
   .note-item p {
-    font-size: 13px;
+    font-size: 12px;
     line-height: 1.6;
   }
 
   .note-arrow {
-    font-size: 18px;
+    font-size: 17px;
+  }
+
+  /* SOCIAL */
+
+  .social-list {
+    padding-top: 20px;
+  }
+
+  .social-list a {
+    padding: 19px 0;
+
+    font-size: 14px;
+  }
+
+  /* ABOUT */
+
+  .about-content {
+    padding-top: 35px;
+  }
+
+  .about-content .lead {
+    font-size: 19px;
+    line-height: 1.55;
+  }
+
+  .about-content p {
+    font-size: 14px;
+    line-height: 1.75;
   }
 
   /* MARKDOWN */
 
   .markdown-page {
     width: calc(100% - 36px);
-    padding: 52px 0 80px;
+
+    padding-top: 45px;
+    padding-bottom: 70px;
   }
 
-  .markdown-page h1 {
-    font-size: clamp(2.3rem, 10vw, 4rem);
+  .back-link {
+    margin-bottom: 32px;
+
+    font-size: 10px;
+  }
+
+  .markdown-content {
+    font-size: 14px;
+    line-height: 1.75;
+  }
+
+  .markdown-content h1 {
+    font-size: clamp(2.4rem, 11vw, 4rem);
+
     line-height: 1;
   }
 
-  .markdown-page h2 {
+  .markdown-content h2 {
+    margin-top: 42px;
+
     font-size: 24px;
-    margin-top: 44px;
   }
 
-  .markdown-page h3 {
+  .markdown-content h3 {
     font-size: 19px;
   }
 
-  .markdown-page p,
-  .markdown-page li {
-    font-size: 14px;
-    line-height: 1.8;
-  }
-
-  .markdown-page pre {
+  .markdown-content pre {
     max-width: 100%;
+
+    margin-left: 0;
+    margin-right: 0;
+
+    padding: 14px;
+
     overflow-x: auto;
-    font-size: 12px;
+
+    font-size: 11px;
   }
 
-  .markdown-page code {
-    font-size: 12px;
-  }
+  .markdown-content table {
+    display: block;
 
-  /* ABOUT */
+    max-width: 100%;
 
-  .about-grid {
-    grid-template-columns: 1fr;
-    gap: 40px;
-  }
+    overflow-x: auto;
 
-  /* SOCIAL */
-
-  .social-grid {
-    grid-template-columns: 1fr;
+    white-space: nowrap;
   }
 }
 
 
-@media (max-width: 420px) {
+@media (max-width: 380px) {
   .topbar {
-    padding: 0 14px;
+    padding: 0 10px;
+
+    gap: 12px;
   }
 
   .topbar-nav {
-    gap: 10px;
+    gap: 15px;
   }
 
   .topbar-nav a {
     font-size: 10px;
   }
 
-  .home-content {
-    width: calc(100% - 28px);
+  .home-page {
+    padding-left: 14px;
+    padding-right: 14px;
   }
 
   .content-page,
@@ -1233,9 +1257,5 @@ img {
 
   .home-content h1 {
     font-size: clamp(3rem, 18vw, 4.5rem);
-  }
-
-  .item-card {
-    padding: 18px;
   }
 }
