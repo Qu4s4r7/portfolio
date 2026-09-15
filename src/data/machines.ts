@@ -7,7 +7,7 @@ export const machines: Machine[] = [
     platform: "Hack The Box",
     difficulty: "Medium",
     os: "Linux",
-    image: "/images/machines/orion.webp",
+    image: `${import.meta.env.BASE_URL}images/machines/orion.webp`,
     date: "2026",
     tags: [
       "Linux",
@@ -22,7 +22,7 @@ export const machines: Machine[] = [
     platform: "Hack The Box",
     difficulty: "Easy",
     os: "Linux",
-    image: "/images/machines/example.webp",
+    image: `${import.meta.env.BASE_URL}images/machines/example.webp`,
     date: "2026",
     tags: [
       "Linux",

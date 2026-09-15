@@ -7,7 +7,7 @@ export const projects: Project[] = [
     description:
       "Tienda tecnológica desarrollada con React y TypeScript.",
     image:
-      "/images/projects/sky-light.webp",
+      `${import.meta.env.BASE_URL}images/projects/sky-light.webp`,
     technologies: [
       "React",
       "TypeScript",
@@ -24,7 +24,7 @@ export const projects: Project[] = [
     description:
       "Mi espacio personal para proyectos, máquinas y documentación.",
     image:
-      "/images/projects/portfolio.webp",
+      `${import.meta.env.BASE_URL}images/projects/portfolio.webp`,
     technologies: [
       "React",
       "TypeScript",
