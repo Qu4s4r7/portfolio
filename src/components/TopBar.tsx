@@ -7,8 +7,8 @@ export default function TopBar() {
 
   const links = [
     { label: "About", path: "/about" },
-    { label: "Machines", path: "/machines" },
     { label: "Projects", path: "/projects" },
+    { label: "Machines", path: "/machines" },
     { label: "Notes", path: "/notes" },
     { label: "Social", path: "/social" },
   ];
