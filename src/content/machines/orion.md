@@ -1,13 +1,5 @@
 ---
-id: "orion"
-title: "Orion"
-platform: "HackTheBox"
-os: "Linux"
-difficulty: "Easy"
-ip: "10.129.244.146"
-date: "15-09-2026"
-tags: ["samba","metasploit"]
----
+
 # Orion WriteUp - Hack The Box
 **Date**: `2026-08-10`
 **Level**: `Easy`
