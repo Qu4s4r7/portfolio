@@ -28,6 +28,8 @@ export default function Machines() {
               <span>{machine.date}</span>
             </div>
 
+            <img className="item-image" src={machine.image} />
+
             <h2>{machine.title}</h2>
 
             <p>
