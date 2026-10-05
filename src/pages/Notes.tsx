@@ -1,13 +1,5 @@
 import { Link } from "react-router-dom";
-
-const notes = [
-  {
-    id: "redes",
-    title: "Redes",
-    description:
-      "Apuntes y conceptos relacionados con redes y sistemas.",
-  },
-];
+import { notes } from "../data/notes";
 
 export default function Notes() {
   return (

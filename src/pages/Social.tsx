@@ -15,7 +15,7 @@ export default function Social() {
 
       <div className="social-list">
         <a
-          href="https://github.com/"
+          href="https://github.com/Qu4s4r7"
           target="_blank"
           rel="noreferrer"
         >
@@ -24,11 +24,11 @@ export default function Social() {
         </a>
 
         <a
-          href="https://www.linkedin.com/"
+          href="https://app.hackthebox.com/profile/1012903"
           target="_blank"
           rel="noreferrer"
         >
-          <span>LinkedIn</span>
+          <span>Hack The Box</span>
           <span>↗</span>
         </a>
       </div>
