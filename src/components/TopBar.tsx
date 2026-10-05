@@ -6,11 +6,11 @@ export default function TopBar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const links = [
-    { label: "About", path: "/about" },
-    { label: "Projects", path: "/projects" },
-    { label: "Machines", path: "/machines" },
-    { label: "Notes", path: "/notes" },
-    { label: "Social", path: "/social" },
+    { label: "About", icon: "person", path: "/about" },
+    { label: "Projects", icon: "folder", path: "/projects" },
+    { label: "Machines", icon: "deployed_code", path: "/machines" },
+    { label: "Notes", icon: "library_books", path: "/notes" },
+    { label: "Social", icon: "group", path: "/social" },
   ];
 
   const isActive = (path: string) =>
@@ -35,7 +35,8 @@ export default function TopBar() {
               to={link.path}
               className={isActive(link.path) ? "active" : ""}
             >
-              {link.label}
+              <span class="material-symbols-outlined">{link.icon}</span>
+              <p>{link.label}</p>
             </Link>
           ))}
         </nav>
@@ -72,6 +73,7 @@ export default function TopBar() {
               <span className="mobile-menu-number">
                 0{index + 1}
               </span>
+              
 
               <span>{link.label}</span>
 

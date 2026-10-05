@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { projects } from "../data/projects";
 
+
+
 export default function Projects() {
   return (
     <section className="content-page">
@@ -11,8 +13,12 @@ export default function Projects() {
           <p className="page-kicker">
             SELECTED WORK
           </p>
-
-          <h1>Projects</h1>
+          
+          <h1>
+            <span class="material-symbols-outlined">folder</span>
+            Projects
+          </h1>
+          
         </div>
       </div>
 

@@ -5,21 +5,21 @@
 }
 
 :root {
-  --bg: #080909;
-  --surface: #101211;
+  --bg: #131314;
+  --surface: #131314;
   --surface-light: #151716;
   --surface-hover: #1b1d1c;
 
   --text: #f2f2f2;
-  --text-soft: rgba(242, 242, 242, 0.68);
-  --text-muted: rgba(242, 242, 242, 0.42);
+  --text-soft: rgba(242, 242, 242, 0.678);
+  --text-muted: rgb(123, 123, 123);
   --text-faint: rgba(242, 242, 242, 0.22);
 
   --line: rgba(255, 255, 255, 0.08);
   --line-strong: rgba(255, 255, 255, 0.14);
 
-  --accent: #6dff8a;
-  --accent-soft: rgba(109, 255, 138, 0.1);
+  --accent: rgb(159, 239, 0);
+  --accent-soft: rgba(159, 239, 0, 0.1);
 
   --topbar-height: 58px;
 
@@ -83,7 +83,12 @@ img {
 #root {
   min-height: 100vh;
 }
-
+h1 .material-symbols-outlined {
+  font-size: 60px;
+}
+.material-symbols-outlined {
+  font-size: 18px;
+}
 /* =========================================================
    APP
    ========================================================= */
@@ -120,7 +125,7 @@ img {
 
   padding: 0 28px;
 
-  background: rgba(8, 9, 9, 0.88);
+  background: #1e1f20;
   border-bottom: 1px solid var(--line);
 
   backdrop-filter: blur(18px);
@@ -173,6 +178,7 @@ img {
   letter-spacing: 0.03em;
 
   transition: color 0.2s ease;
+  display: flex;
 }
 
 .topbar-nav a::after {

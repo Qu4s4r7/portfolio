@@ -12,7 +12,10 @@ export default function Machines() {
             LAB / WRITEUPS
           </p>
 
-          <h1>Machines</h1>
+          <h1>
+            <span class="material-symbols-outlined">deployed_code</span>
+            Machines
+          </h1>
         </div>
       </div>
 
