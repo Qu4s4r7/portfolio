@@ -15,7 +15,7 @@ export default function Projects() {
           </p>
           
           <h1>
-            <span class="material-symbols-outlined">folder</span>
+            <span className="material-symbols-outlined">folder</span>
             Projects
           </h1>
           

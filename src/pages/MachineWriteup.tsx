@@ -52,6 +52,7 @@ export default function MachineWriteup() {
       </div>
 
       <MarkdownRenderer content={content} />
+      <p>Write-up realizado con fines educativos en el entorno de laboratorio de {machine.platform}</p>
     </section>
   );
 }

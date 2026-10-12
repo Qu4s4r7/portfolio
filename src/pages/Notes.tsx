@@ -13,7 +13,7 @@ export default function Notes() {
           </p>
 
           <h1>
-            <span class="material-symbols-outlined">library_books</span>
+            <span className="material-symbols-outlined">library_books</span>
             Notes
           </h1>
         </div>

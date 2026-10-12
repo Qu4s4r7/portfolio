@@ -9,7 +9,10 @@ export default function Social() {
             CONNECT
           </p>
 
-          <h1>Social</h1>
+          <h1>
+            <span className="material-symbols-outlined">group</span>
+            Social
+          </h1>
         </div>
       </div>
 

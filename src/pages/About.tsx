@@ -9,7 +9,10 @@ export default function About() {
             INFORMATION
           </p>
 
-          <h1>About me</h1>
+          <h1>
+            <span className="material-symbols-outlined">person</span>
+            About me
+          </h1>
         </div>
       </div>
 

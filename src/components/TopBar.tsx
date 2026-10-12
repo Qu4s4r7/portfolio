@@ -35,7 +35,7 @@ export default function TopBar() {
               to={link.path}
               className={isActive(link.path) ? "active" : ""}
             >
-              <span class="material-symbols-outlined">{link.icon}</span>
+              <span className="material-symbols-outlined">{link.icon}</span>
               <p>{link.label}</p>
             </Link>
           ))}
