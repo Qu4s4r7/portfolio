@@ -7,19 +7,12 @@ export default function Projects() {
   return (
     <section className="content-page">
       <div className="page-header">
+        <p className="page-kicker">SELECTED WORK</p>
         <span className="page-number">02</span>
-
-        <div>
-          <p className="page-kicker">
-            SELECTED WORK
-          </p>
-          
-          <h1>
-            <span className="material-symbols-outlined">folder</span>
-            Projects
-          </h1>
-          
-        </div>
+      </div>
+      <div className="page-title">
+        <span className="material-symbols-outlined">folder</span>
+        <h1>Projects</h1>
       </div>
 
       <div className="items-grid">

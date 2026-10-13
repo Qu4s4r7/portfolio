@@ -5,19 +5,14 @@ export default function Machines() {
   return (
     <section className="content-page">
       <div className="page-header">
+        <p className="page-kicker">LAB / WRITEUPS</p>
         <span className="page-number">03</span>
-
-        <div>
-          <p className="page-kicker">
-            LAB / WRITEUPS
-          </p>
-
-          <h1>
-            <span className="material-symbols-outlined">deployed_code</span>
-            Machines
-          </h1>
-        </div>
       </div>
+      <div className="page-title">
+        <span className="material-symbols-outlined">deployed_code</span>
+        <h1>Machines</h1>
+      </div>
+      
 
       <div className="items-grid">
         {machines.map((machine) => (

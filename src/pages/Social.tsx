@@ -2,18 +2,12 @@ export default function Social() {
   return (
     <section className="content-page">
       <div className="page-header">
+        <p className="page-kicker">CONNECT</p>
         <span className="page-number">05</span>
-
-        <div>
-          <p className="page-kicker">
-            CONNECT
-          </p>
-
-          <h1>
-            <span className="material-symbols-outlined">group</span>
-            Social
-          </h1>
-        </div>
+      </div>
+      <div className="page-title">
+        <span className="material-symbols-outlined">group</span>
+        <h1>Social</h1>
       </div>
 
       <div className="social-list">

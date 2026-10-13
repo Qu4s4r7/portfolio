@@ -2,18 +2,12 @@ export default function About() {
   return (
     <section className="content-page">
       <div className="page-header">
+        <p className="page-kicker">INFORMATION</p>
         <span className="page-number">01</span>
-
-        <div>
-          <p className="page-kicker">
-            INFORMATION
-          </p>
-
-          <h1>
-            <span className="material-symbols-outlined">person</span>
-            About me
-          </h1>
-        </div>
+      </div>
+      <div className="page-title">
+        <span className="material-symbols-outlined">person</span>
+        <h1>About me</h1>
       </div>
 
       <div className="about-content">

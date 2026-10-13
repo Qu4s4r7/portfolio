@@ -5,18 +5,12 @@ export default function Notes() {
   return (
     <section className="content-page">
       <div className="page-header">
+        <p className="page-kicker">KNOWLEDGE</p>
         <span className="page-number">04</span>
-
-        <div>
-          <p className="page-kicker">
-            KNOWLEDGE
-          </p>
-
-          <h1>
-            <span className="material-symbols-outlined">library_books</span>
-            Notes
-          </h1>
-        </div>
+      </div>
+      <div className="page-title">
+        <span className="material-symbols-outlined">library_books</span>
+        <h1>Notes</h1>
       </div>
 
       <div className="notes-list">

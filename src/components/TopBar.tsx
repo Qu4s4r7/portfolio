@@ -6,11 +6,11 @@ export default function TopBar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const links = [
-    { label: "About", icon: "person", path: "/about" },
-    { label: "Projects", icon: "folder", path: "/projects" },
-    { label: "Machines", icon: "deployed_code", path: "/machines" },
-    { label: "Notes", icon: "library_books", path: "/notes" },
-    { label: "Social", icon: "group", path: "/social" },
+    { label: "About", path: "/about" },
+    { label: "Projects", path: "/projects" },
+    { label: "Machines", path: "/machines" },
+    { label: "Notes", path: "/notes" },
+    { label: "Social", path: "/social" },
   ];
 
   const isActive = (path: string) =>
@@ -25,7 +25,7 @@ export default function TopBar() {
     <>
       <header className="topbar">
         <Link to="/" className="topbar-logo" onClick={closeMenu}>
-          CM
+          <img src="https://avatars.githubusercontent.com/u/98132870?v=4" alt="logo" />
         </Link>
 
         <nav className="topbar-nav">
@@ -35,7 +35,6 @@ export default function TopBar() {
               to={link.path}
               className={isActive(link.path) ? "active" : ""}
             >
-              <span className="material-symbols-outlined">{link.icon}</span>
               <p>{link.label}</p>
             </Link>
           ))}
