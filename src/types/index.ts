@@ -1,3 +1,32 @@
+export interface Config {
+  profile: {
+    name: string;
+    lastname: string;
+    handle: string;
+    description: string;
+    location: string;
+    avatar: string;
+    date: string;
+  };
+  hero: {
+    greeting: string;
+    description: string;
+    footerNote: string;
+  };
+  socials: Array<{
+    name: string;
+    url: string;
+    display: string;
+  }>;
+  theme: {
+    bg: string;
+    surface: string;
+    text: string;
+    accent: string;
+    accentSoft: string;
+  };
+}
+
 export type Difficulty =
   | "Easy"
   | "Medium"
@@ -23,10 +52,8 @@ export interface Project {
   github: string;
   demo?: string;
 }
-
-export interface DockItem {
+export interface Note {
   id: string;
-  label: string;
-  icon: string;
-  path: string;
+  title: string;
+  description: string;
 }

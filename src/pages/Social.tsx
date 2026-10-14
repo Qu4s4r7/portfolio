@@ -1,3 +1,5 @@
+import config from "../config.json";
+
 export default function Social() {
   return (
     <section className="content-page">
@@ -11,23 +13,17 @@ export default function Social() {
       </div>
 
       <div className="social-list">
-        <a
-          href="https://github.com/Qu4s4r7"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <span>GitHub</span>
-          <span>↗</span>
-        </a>
-
-        <a
-          href="https://app.hackthebox.com/profile/1012903"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <span>Hack The Box</span>
-          <span>↗</span>
-        </a>
+        {config.socials.map((social, index) => (
+          <a
+            key={index}
+            href={social.url}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <span>{social.name}</span>
+            <span>↗</span>
+          </a>
+        ))}
       </div>
     </section>
   );

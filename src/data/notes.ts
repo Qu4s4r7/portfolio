@@ -1,4 +1,5 @@
-export const notes = [
+import type { Note } from "../types";
+export const notes: Note[] = [
   {
     id: "arp-scan",
     title: "Arp-scan",

@@ -1,17 +1,10 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
+import config from "../config.json";
 
 export default function TopBar() {
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
-
-  const links = [
-    { label: "About", path: "/about" },
-    { label: "Projects", path: "/projects" },
-    { label: "Machines", path: "/machines" },
-    { label: "Notes", path: "/notes" },
-    { label: "Social", path: "/social" },
-  ];
 
   const isActive = (path: string) =>
     location.pathname === path ||
@@ -25,11 +18,11 @@ export default function TopBar() {
     <>
       <header className="topbar">
         <Link to="/" className="topbar-logo" onClick={closeMenu}>
-          <img src="https://avatars.githubusercontent.com/u/98132870?v=4" alt="logo" />
+          <img src={config.profile.avatar} alt="logo" />
         </Link>
 
         <nav className="topbar-nav">
-          {links.map((link) => (
+          {config.app.navLinks.map((link) => (
             <Link
               key={link.path}
               to={link.path}
@@ -62,7 +55,7 @@ export default function TopBar() {
         aria-hidden={!menuOpen}
       >
         <nav className="mobile-menu-nav">
-          {links.map((link, index) => (
+          {config.app.navLinks.map((link, index) => (
             <Link
               key={link.path}
               to={link.path}
@@ -72,7 +65,7 @@ export default function TopBar() {
               <span className="mobile-menu-number">
                 0{index + 1}
               </span>
-              
+
 
               <span>{link.label}</span>
 

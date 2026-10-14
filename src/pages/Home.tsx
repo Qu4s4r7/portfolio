@@ -1,3 +1,5 @@
+import config from "../config.json";
+
 export default function Home() {
   return (
     <section className="home-page">
@@ -13,22 +15,21 @@ export default function Home() {
         </p>
 
         <h1>
-          Cristian
+          {config.profile.name}
           <br />
-          <span>Machado.</span>
+          <span>{config.profile.lastname}</span>
         </h1>
 
         <p className="home-description">
-          Systems Engineering student,
-          developer and technology enthusiast.
+          {config.profile.description}
         </p>
 
         <div className="home-meta">
-          <span>COLOMBIA</span>
+          <span>{config.profile.location}</span>
 
           <span className="home-meta-line" />
 
-          <span>2026</span>
+          <span>{config.profile.date}</span>
         </div>
       </div>
     </section>

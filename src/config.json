@@ -1,0 +1,36 @@
+{
+  "app": {
+    "navLinks": [
+      { "label": "About", "path": "/about" },
+      { "label": "Projects", "path": "/projects" },
+      { "label": "Machines", "path": "/machines" },
+      { "label": "Notes", "path": "/notes" },
+      { "label": "Social", "path": "/social" }
+    ]
+  },
+  "profile": {
+    "name": "Cristian",
+    "lastname": "Machado",
+    "handle": "qu4s4r",
+    "description": "Systems Engineering student, developer and technology enthusiast.",
+    "avatar": "https://avatars.githubusercontent.com/u/98132870?v=4",
+    "location": "Colombia",
+    "date": "2026"
+  },
+  "hero": {
+    "greeting": "I'm Cristian Machado, a Systems Engineering student and developer interested in technology, software and systems.",
+    "description": "I enjoy building applications, experimenting with Linux, learning about networks and exploring different areas of computer science.",
+    "footerNote": "This portfolio is a collection of my projects, machines, notes and experiments."
+  },
+  "socials": [
+    { "name": "GitHub", "url": "https://github.com/Qu4s4r7", "display": "github.com/Qu4s4r7" },
+    { "name": "HackTheBox", "url": "https://app.hackthebox.com/profile/1012903", "display": "app.hackthebox.com/profile/1012903" }
+  ],
+  "theme": {
+    "bg": "#1d1d1f",
+    "surface": "#1d1d1f",
+    "text": "#f2f2f2",
+    "accent": "#9fef00",
+    "accentSoft": "rgba(159, 239, 0, 0.4)"
+  }
+}

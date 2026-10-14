@@ -7,7 +7,7 @@
 :root {
   --bg: #1d1d1f;
   --surface: #1d1d1f;
-  --surface-light: rgba(255, 255, 255, 0.030); 
+  --surface-light: rgba(255, 255, 255, 0.030);
   --surface-hover: rgba(255, 255, 255, 0.075);
   --glass: rgba(30, 31, 32, 0.75);
 
@@ -92,6 +92,43 @@ h1 .material-symbols-outlined {
 .material-symbols-outlined {
   font-size: 18px;
 }
+.btn-scroll {
+    position: fixed;
+    right: 40px;
+    bottom: 40px;
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+    z-index: 100;
+    background: var(--surface-light);
+    border: 1px solid var(--line);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--accent);
+    border-radius: 50%;
+    transform: scale(0.0);
+    transition: transform 300ms ease-in-out;
+}
+.btn-scroll.visible:hover {
+    background-color: var(--surface-hover);
+}
+.btn-scroll.visible {
+    transform: scale(1);
+}
+
+
+footer {
+    display: flex;
+    width: 100%;
+    height: 40px;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    color: var(--text-muted);
+}
 
 /* =========================================================
    APP
@@ -125,34 +162,12 @@ h1 .material-symbols-outlined {
   justify-content: space-between;
   align-items: center;
   padding: 0 30px;
-  background: var(--bg);
+  background: var(--surface-light);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   overflow: hidden;
   border-bottom: 1px solid var(--line);
 }
-
-.topbar::before {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  background: var(--accent);
-  width: 100px;
-  height: 1px;
-  animation: moving 10s ease-in-out infinite alternate;
-  box-shadow: 0 0 10px 2px var(--accent-soft);
-}
-
-@keyframes moving {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(calc(100vw - 100px)); 
-  }
-}
-
 .topbar-logo {
   width: 40px;
   height: 40px;
@@ -559,7 +574,7 @@ h1 .material-symbols-outlined {
 .back-link {
   display: inline-flex;
   align-items: center;
-  margin-bottom: 45px;
+  margin-bottom: 25px;
   color: var(--text-muted);
   font-size: 11px;
   font-weight: 500;
@@ -571,7 +586,6 @@ h1 .material-symbols-outlined {
 }
 
 .markdown-content {
-  padding: 20px 40px;
   color: var(--text-soft);
   font-size: 15px;
   line-height: 1.8;
@@ -831,6 +845,7 @@ h1 .material-symbols-outlined {
     display: flex;
     flex-direction: column;
     position: fixed;
+    top: var(--topbar-height);
     right: 0;
     z-index: 1100;
     width: 88vw;
