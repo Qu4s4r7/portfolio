@@ -5,7 +5,7 @@
 - **Level**: `Easy`
 - **OS**: `Linux`
 - **IP**: `10.129.244.146`
-- **Tags**: `CraftCMS`, `Nginx`, `Metasploit`, `MySQL`,`SSH`,`Telnet`, `CVE-2025-32432`, `CVE-2026-24061`
+- **Tags**: `CraftCMS`, `Metasploit`, `MySQL` ,`Telnet`, `CVE-2025-32432`, `CVE-2026-24061`
 
 ## Executive Summary
 Orion es una máquina Linux fácil. La cual explota una vulnerabilidad presente en un login web y así empezar a comprometer la máquina con **Metasploit**.

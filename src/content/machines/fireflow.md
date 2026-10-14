@@ -5,7 +5,7 @@
 - **Level**: `Medium`
 - **OS**: `Linux`
 - **IP**: `10.129.127.154`
-- **Tags**: `Kubernetes`, `Node Exporter`, `RCE`, `Python`, `HostPath`, `Privilege Escalation`, `CVE-2026-33017`
+- **Tags**: `Kubernetes`, `Node Exporter`, `RCE`, `HostPath`, `CVE-2026-33017`
 
 ## Executive Summary
 Fireflow es una máquina Linux de dificultad fácil enfocada en entornos de contenedores. La intrusión inicial se logra comprometiendo un servicio expuesto para ejecutar código de manera remota. Posteriormente, se aprovecha una mala configuración en un contenedor privilegiado de `node-exporter` (que cuenta con el sistema de archivos del host montado en la raíz mediante `hostPath: /`) para leer archivos sensibles y escalar privilegios de forma completa sobre el sistema subyacente.

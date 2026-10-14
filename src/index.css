@@ -589,6 +589,7 @@ footer {
   color: var(--text-soft);
   font-size: 15px;
   line-height: 1.8;
+  margin-top: 20px;
 }
 
 .markdown-content h1,

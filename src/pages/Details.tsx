@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import MarkdownRenderer from "../components/MarkdownRenderer";
 import { getMarkdownContent } from "../data/contentLoader";
@@ -10,32 +9,9 @@ interface DetailsProps {
 }
 export default function Details({ data, name }: DetailsProps) {
   const { id } = useParams();
-  const [showScrollTop, setShowScrollTop] = useState(false);
-
   const content = getMarkdownContent(name, id);
   const element = data ? data.find((item: any) => item.id === id) : null;
   const isNotFound = name === "notes" ? !content : !content || !element;
-
-  useEffect(() => {
-    const checkScrollPosition = () => {
-      if (window.scrollY > 300) {
-        setShowScrollTop(true);
-      } else {
-        setShowScrollTop(false);
-      }
-    };
-    window.addEventListener("scroll", checkScrollPosition);
-    return () => {
-      window.removeEventListener("scroll", checkScrollPosition);
-    };
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  };
 
   if (isNotFound) {
     return (
@@ -71,8 +47,6 @@ export default function Details({ data, name }: DetailsProps) {
       {name === "machines" && element && "platform" in element && (
         <p>Write-up realizado con fines educativos en el entorno de laboratorio de {element.platform}</p>
       )}
-
-      <button onClick={scrollToTop} className={`btn-scroll ${showScrollTop ? "visible" : ""}`}> ↑ </button>
     </section>
   );
 }
